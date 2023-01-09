@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Budget Tracker</title>
+</head>
+<body>
+  <div id="home-container"></div>
+  <div id="add-transaction-container"></div>
+  <script src="AddTransactionScreen.js"></script>
+  <script src="BudgetController.js"></script>
+  <script src="HomeScreen.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
+
+// BudgetController.js
+class BudgetController {
+  constructor() {
+    this.income = 0;
+    this.expenses = 0;
+    this.balance = 0;
+  }
+
+  addTransaction(transaction) {
+    // Update the income, expenses, and balance based on the transaction type
+    if (transaction.type === "income") {
+      this.income += transaction.amount;
+      this.balance += transaction.amount;
+    } else {
+      this.expenses += transaction.amount;
+      this.balance -= transaction.amount;
+    }
+  }
+
+  showScreen(screenName) {
+    // Code for displaying the specified screen goes here
+  }
+}
+
+// HomeScreen.js
+class HomeScreen {
+  constructor(container, controller) {
+    this.container = container;
+    this.controller = controller;
+
+    // Display the budget summary
+    this.budgetLabel = document.createElement("h1");
+    this.budgetLabel.textContent = "Budget Summary";
+    this.container.appendChild(this.budgetLabel);
+    this.incomeLabel = document.createElement("p");
+    this.incomeLabel.textContent = `Total Income: ${this.controller.income}`;
+    this.container.appendChild(this.incomeLabel);
+    this.expensesLabel = document.createElement("p");
+    this.expensesLabel.textContent = `Total Expenses: ${this.controller.expenses}`;
+    this.container.appendChild(this.expensesLabel);
+    this.balanceLabel = document.createElement("p");
+    this.balanceLabel.textContent = `Net Balance: ${this.controller.balance}`;
+    this.container.appendChild(this.balanceLabel);
+
+    // Offer quick access to key features
+    this.addButton = document.createElement("button");
+    this.addButton.textContent = "Add Transaction";
+    this.addButton.addEventListener("click", () => this.controller.showScreen("AddTransactionScreen"));
+    this.container.appendChild(this.addButton);
+    this.reportButton = document.createElement("button");
+    this.reportButton.textContent = "View Reports";
+    this.reportButton.addEventListener("click", () => this.controller.showScreen("ReportScreen"));
+    this.container.appendChild(this.reportButton);
+  }
+}
+
+// AddTransactionScreen.js
+class AddTransactionScreen {
+  constructor(container, controller) {
+    this.container = container;
+    this.controller = controller;
+
+    // Create the form for entering transaction details
+    this.form = document.createElement("form");
+    this.form.addEventListener("submit", e => this.addTransaction(e));
+    this.container.appendChild(this.form);
+
+    // Add a dropdown menu for selecting the transaction type (income or expense)
+    this.typeLabel = document.createElement("label");
+    this.typeLabel.textContent = "Type:";
+    this.form.appendChild(this.typeLabel);
+    this.typeSelect = document.createElement("select");
+    this.typeSelect.innerHTML = `
+      <option value="income">Income</option>
+      <option value="expense">Expense</option>
+    `;
+    this.form.appendChild(this.typeSelect);
+
+    // Add a text field for entering the amount
+    this.amountLabel = document.createElement("label");
+    this.amountLabel.textContent = "Amount:";
+    this.form.appendChild(this.amountLabel);
+    this.amountInput = document.createElement("input");
+    this.amountInput.type = "number";
+    this.form.appendChild(this.amountInput);
+
+    // Add a text field for entering the category
+    this.categoryLabel = document.createElement("label");
+    this.categoryLabel.textContent = "Category:";
+    this.form.appendChild(this.categoryLabel);
+    this.categoryInput = document.createElement("input");
+    this.form.appendChild(this.categoryInput);
+
+    // Add a date picker for selecting the date
+    this.dateLabel = document.createElement("label");
+    this.dateLabel.textContent = "Date:";
+    this.form.appendChild(this.dateLabel);
+    this.dateInput = document.createElement("input");
+    this.dateInput.type = "date";
+    this.form.appendChild(this.dateInput);
+
+    // Add a submit button
+    this.submitButton = document.createElement("button");
+    this.submitButton.textContent = "Add Transaction";
+    this.submitButton.type = "submit";
+    this.form.appendChild(this.submitButton);
+  }
+  // Method for adding a new transaction
+  addTransaction(e) {
+    e.preventDefault();
+    // Get the transaction details from the form
+    const type = this.typeSelect.value;
+    const amount = this.amountInput.value;
+    const category = this.categoryInput.value;
+    const date = this.dateInput.value;
+    // Create a new transaction object
+    const transaction = { type, amount, category, date };
+    // Add the transaction to the budget data
+    this.controller.addTransaction(transaction);
+    // Go back to the home screen
+    this.controller.showScreen("HomeScreen");
+  }
+}
+
+
+
+
